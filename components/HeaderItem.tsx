@@ -1,8 +1,13 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+interface pros {
+  url?: any;
+  name: string;
+  link?: any;
+}
 
-export default function App(props) {
+export default function App(props: pros) {
   const loc = usePathname();
   const a = { opened: false };
 

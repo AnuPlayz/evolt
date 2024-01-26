@@ -6,12 +6,12 @@ import { redirect } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 export default function Create() {
   const supabase = createClient();
-  const hiddenFileInput = useRef<HTMLInputElement | null>();
+  const hiddenFileInput = useRef<HTMLInputElement | any>();
   const handleClick = () => {
     hiddenFileInput.current?.click();
   };
   const [changed, setChanged] = useState(false);
-  const [file, setFile] = useState();
+  const [file, setFile] = useState<any>();
   async function coverChange() {
     console.log("here here");
     const bucket = "covers";
@@ -109,10 +109,10 @@ export default function Create() {
           />
 
           <input
-            onChange={(e) => {
+            onChange={(e: any) => {
               setCover(URL.createObjectURL(e.target.files![0]));
               setChanged(true);
-              setFile(e.target.files[0]);
+              setFile(e.target.files![0]);
             }}
             className="absolute inset-x-0 bottom-0 mx-auto hidden"
             type="file"
@@ -129,7 +129,7 @@ export default function Create() {
           Name
         </label>
         <input
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e: any) => setName(e.target.value)}
           className="mx-6 mb-4 border bg-white px-4 py-2"
           name="name"
           defaultValue={name}
@@ -144,7 +144,7 @@ export default function Create() {
         </label>
         <textarea
           defaultValue={about}
-          onChange={(e) => setAbout(e.target.value)}
+          onChange={(e: any) => setAbout(e.target.value)}
           className="mx-6 mb-4 border bg-white px-4 py-2"
           name="content"
           placeholder="Please Type About Yourself"
