@@ -1,10 +1,12 @@
 "use client";
-import PostComponent from "@/components/PostComponent";
-import { createClient } from "@/utils/supabase/client";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
-import { useEffect, useState } from "react";
 import { Oval } from "react-loader-spinner";
+import { createClient } from "@/utils/supabase/client";
+import StoriesView from "@/components/StoriesView";
+import { useEffect, useLayoutEffect, useState } from "react";
+import PostComponent from "@/components/PostComponent";
+import { redirect } from "next/navigation";
 export default function Page({ params }: { params: { slug: string } }) {
   const supabase = createClient();
   const canInitSupabaseClient = () => {
@@ -36,16 +38,16 @@ export default function Page({ params }: { params: { slug: string } }) {
         console.log(error);
       } else {
         console.log(data);
-        const ds = data;
+        let ds:any = data;
         for await (const [index, post] of ds.entries()) {
-          const { data } = await supabase.from("user").select("*").eq("id", post.poster);
-          if (data) {
-            ds[index].name = data[0].name;
+          const { data, error } = await supabase.from("user").select("*").eq("id", post.poster);
+          if(data){
+          ds[index].name = data[0].name;
 
-            ds[index].dp = data[0].image;
+          ds[index].dp = data[0].image;
 
-            const date2 = new Date(ds[index].created_at);
-            ds[index].diff = date1.getTime() - date2.getTime();
+          let date2 = new Date(ds[index].created_at);
+          ds[index].diff = date1.getTime() - date2.getTime();
           }
         }
         setPosts(ds);
@@ -56,13 +58,13 @@ export default function Page({ params }: { params: { slug: string } }) {
   }, []);
   if (isSupabaseConnected) {
     return (
-      <div className="h-screen flex-1 overflow-hidden p-0 py-2">
-        <div className="mx-1 bg-white/50 p-4 py-2 md:mx-1">
-          <div className="relative content-center items-center">
+      <div className="flex-1 h-screen p-0 py-2 overflow-x-hidden overflow-y-hidden">
+        <div className="p-4 py-2 pb-4 mx-1 bg-opacity-50 md:mx-1 ">
+          <div className="relative items-center content-center">
             <svg
               viewBox="0 0 24 24"
               aria-hidden="true"
-              className=" absolute inset-y-0 my-auto ml-6 h-[18px] w-[18px] text-black"
+              className=" top-0 bottom-0 my-auto absolute ml-6 w-[18px] h-[18px] text-black"
             >
               <g>
                 <path
@@ -72,13 +74,13 @@ export default function Page({ params }: { params: { slug: string } }) {
               </g>
             </svg>
             <input
-              className="font-poppins peer h-12 w-full border border-gray-200 bg-white pl-14 pr-8 text-[14px] placeholder:text-gray-600 focus:bg-white focus:outline-black"
+              className="w-full border border-gray-150 bg-white peer h-12 focus:outline-black focus:bg-white placeholder:text-neutral-600 font-poppins pl-14 pr-8 text-[14px]"
               placeholder={"Search " + params.slug + "'s" + " posts"}
             ></input>
           </div>
         </div>
-        <div className="hiddenscroll h-full overflow-y-scroll">
-          <div className="animate-in hiddenscroll mb-20 flex flex-col gap-2">
+        <div className="h-full overflow-y-scroll hiddenscroll">
+          <div className="flex flex-col gap-2 mb-20 animate-in hiddenscroll">
             {!loading ? (
               posts.map((post) => (
                 <PostComponent
@@ -95,7 +97,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                 />
               ))
             ) : (
-              <div className="flex h-screen w-full content-center items-center">
+              <div className="flex items-center content-center w-full h-screen">
                 <Oval
                   height={80}
                   width={80}

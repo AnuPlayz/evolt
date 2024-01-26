@@ -1,11 +1,13 @@
-import More from "@/components/More";
-import PostComponent from "@/components/PostComponent";
-import Search from "@/components/SearchComponent";
-import { createClient } from "@/utils/supabase/server";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
-import { cookies } from "next/headers";
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
+import StoriesView from "@/components/StoriesView";
+import PostComponent from "@/components/PostComponent";
+import { redirect } from "next/navigation";
+import More from "@/components/More";
+import Search from "@/components/SearchComponent";
 export default async function Index() {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
@@ -25,15 +27,15 @@ export default async function Index() {
   const date1 = new Date();
   const isSupabaseConnected = canInitSupabaseClient();
   let empty = true;
-  let posts = [];
+  let posts: any[] = [];
   let loading = true;
-  let l = [];
+  let l: readonly any[] = [];
   async function get() {
     const { data: user } = await supabase.auth.getUser();
-    const s = user?.user?.id;
+    let s = user?.user?.id;
     const { data: u } = await supabase.from("user").select("*").eq("id", s);
-    if (u) {
-      l = u[0]["bookmarks"];
+    if(u){
+    l = u[0]["bookmarks"];
     }
     console.log("below");
     console.log(l);
@@ -50,14 +52,14 @@ export default async function Index() {
       ds = data;
 
       for await (const [index, post] of ds.entries()) {
-        const { data } = await supabase.from("user").select("*").eq("id", post.poster);
-        if (data) {
-          ds[index].name = data[0].name;
-          const date2 = new Date(ds[index].created_at);
-          ds[index].diff = date1.getTime() - date2.getTime();
-          ds[index].dp = data[0].image;
-        }
+        const { data, error } = await supabase.from("user").select("*").eq("id", post.poster);
+        if(data){
+        ds[index].name = data[0].name;
+        let date2 = new Date(ds[index].created_at);
+        ds[index].diff = date1.getTime() - date2.getTime();
+        ds[index].dp = data[0].image;
       }
+    }
       if (ds.length > 0) {
         empty = false;
       } else {
@@ -71,13 +73,13 @@ export default async function Index() {
   if (isSupabaseConnected) {
     return (
       <>
-        <div className="h-screen flex-1 overflow-hidden p-0 py-2">
-          <div className="mx-1 p-4 py-2 md:mx-1">
+        <div className="flex-1 h-screen p-0 py-2 overflow-x-hidden overflow-y-hidden">
+          <div className="p-4 py-2 pb-4 mx-1 md:mx-1">
             <Search page="bookmarks" text="Bookmarks" />
           </div>
-          <h1 className="my-4 mt-2 px-5 text-xl font-bold">My Bookmarks</h1>
-          <div className="hiddenscroll h-full overflow-y-scroll">
-            <div className="animate-in hiddenscroll mb-20 flex flex-col gap-2">
+          <h1 className="px-5 my-4 mt-2 text-xl font-bold">My Bookmarks</h1>
+          <div className="h-full overflow-y-scroll hiddenscroll">
+            <div className="flex flex-col gap-2 mb-20 animate-in hiddenscroll">
               {!loading ? (
                 !empty ? (
                   posts.map((post) => (
@@ -95,17 +97,17 @@ export default async function Index() {
                     />
                   ))
                 ) : (
-                  <div className="mt-24 flex w-full content-center items-center px-10 sm:px-24 md:px-16 lg:px-24">
-                    <div className="mx-auto flex max-w-max flex-col gap-2">
-                      <h1 className="mx-auto text-center text-lg font-semibold text-black">No Posts To View!</h1>
-                      <h1 className="mx-auto text-center text-sm text-gray-800">
+                  <div className="flex items-center content-center w-full px-10 mt-24 lg:px-24 sm:px-24 md:px-16">
+                    <div className="flex flex-col gap-2 mx-auto max-w-max">
+                      <h1 className="mx-auto text-lg font-semibold text-center text-black">No Posts To View!</h1>
+                      <h1 className="mx-auto text-sm text-center text-neutral-400">
                         Your bookmarked posts appear in here. Seems like you have not bookmarked anything yet. Bookmark
                         posts to view them here.
                       </h1>
                       <Link
                         href="/"
-                        className={`mx-auto mt-3 w-max px-8 py-3 text-xs font-bold  ${
-                          1 == 1 ? "bg-black text-white" : "border-2 bg-white"
+                        className={`w-max mx-auto text-xs font-bold mt-3 px-8 py-3  ${
+                          1 == 1 ? "bg-black text-white" : "bg-white border-2"
                         }`}
                       >
                         Return To Home
@@ -114,7 +116,7 @@ export default async function Index() {
                   </div>
                 )
               ) : (
-                <div className="flex h-screen w-full content-center items-center"></div>
+                <div className="flex items-center content-center w-full h-screen"></div>
               )}
               <More in={l}></More>{" "}
             </div>{" "}

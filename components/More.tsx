@@ -1,17 +1,17 @@
 "use client";
 import { createClient } from "@/utils/supabase/client";
+import { useEffect, useState } from "react";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
-import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { Oval } from "react-loader-spinner";
 import PostComponent from "./PostComponent";
-export default function More(props) {
+export default function More(props: any) {
   const supabase = createClient();
   const [offset, setOffset] = useState(1);
   const { ref, inView } = useInView();
   const [halt, setHalt] = useState(false);
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<any>([]);
   TimeAgo.locale(en);
   const PAGE_COUNT = 5;
   const timeAgo = new TimeAgo("en-US");
@@ -30,19 +30,19 @@ export default function More(props) {
       } else {
         if (data && data.length > 0) {
           console.log(data);
-          const ds = data;
+          let ds = data;
           for await (const [index, post] of ds.entries()) {
-            const { data } = await supabase.from("user").select("*").eq("id", post.poster);
-            if (data) {
-              ds[index].name = data[0].name;
+            const { data, error } = await supabase.from("user").select("*").eq("id", post.poster);
+            if(data){
+            ds[index].name = data[0].name;
 
-              ds[index].dp = data[0].image;
+            ds[index].dp = data[0].image;
 
-              const date2 = new Date(ds[index].created_at);
-              ds[index].diff = date1.getTime() - date2.getTime();
-            }
+            let date2 = new Date(ds[index].created_at);
+            ds[index].diff = date1.getTime() - date2.getTime();
           }
-          setPosts((prev) => [...prev, ...ds]);
+        }
+          setPosts((prev:any) => [...prev, ...ds]);
           if (ds.length < PAGE_COUNT) {
             setHalt(true);
           }
@@ -62,18 +62,18 @@ export default function More(props) {
       } else {
         if (data && data.length > 0) {
           console.log(data);
-          const ds = data;
+          let ds = data;
           for await (const [index, post] of ds.entries()) {
-            const { data } = await supabase.from("user").select("*").eq("id", post.poster);
-            if (data) {
-              ds[index].name = data[0].name;
+            const { data, error } = await supabase.from("user").select("*").eq("id", post.poster);
+            if(data){
+            ds[index].name = data[0].name;
 
-              ds[index].dp = data[0].image;
+            ds[index].dp = data[0].image;
 
-              const date2 = new Date(ds[index].created_at);
-              ds[index].diff = date1.getTime() - date2.getTime();
-            }
+            let date2 = new Date(ds[index].created_at);
+            ds[index].diff = date1.getTime() - date2.getTime();
           }
+        }
           setPosts([...posts, ...ds]);
           if (ds.length < PAGE_COUNT) {
             setHalt(true);
@@ -96,8 +96,8 @@ export default function More(props) {
   }, [inView]);
   return (
     <>
-      <div className="flex flex-col content-center items-center gap-2">
-        {posts.map((post) => (
+      <div className="flex flex-col items-center content-center gap-2">
+        {posts.map((post:any) => (
           <PostComponent
             id={post.id}
             type="profile"

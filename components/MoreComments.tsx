@@ -1,23 +1,25 @@
 "use client";
 
 import { createClient } from "@/utils/supabase/client";
+import { useEffect, useRef, useState } from "react";
+import CommentComponent from "./CommentComponent";
+import { Oval } from "react-loader-spinner";
+import { useInView } from "react-intersection-observer";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
-import { useEffect, useState } from "react";
-import { useInView } from "react-intersection-observer";
-import { Oval } from "react-loader-spinner";
-import CommentComponent from "./CommentComponent";
-export default function CommentsComponent(props) {
+export default function CommentsComponent(props:any) {
   const supabase = createClient();
   TimeAgo.locale(en);
   const timeAgo = new TimeAgo("en-US");
   const date1 = new Date();
   const [loading, setLoading] = useState(true);
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<any>([]);
   const [offset, setOffset] = useState(1);
   const { ref, inView } = useInView();
   const [halt, setHalt] = useState(false);
-  const PAGE_COUNT = 5;
+  const [text, setText] = useState("");
+  const inputRef = useRef(null);
+  let PAGE_COUNT = 5;
   async function get(from: number, to: number) {
     //alert('reached')
     const { data, error } = await supabase
@@ -31,14 +33,14 @@ export default function CommentsComponent(props) {
     } else {
       if (data && data.length > 0) {
         console.log(data);
-        const l = data;
+        let l = data;
         for await (const [index, comment] of l.entries()) {
           console.log(index, comment);
-          const { data } = await supabase.from("user").select("*").eq("id", comment.poster);
+          const { data, error } = await supabase.from("user").select("*").eq("id", comment.poster);
           if (data) {
             l[index].name = data[0]["name"];
             l[index].profile = data[0]["image"];
-            const date2 = new Date(l[index].time);
+            let date2 = new Date(l[index].time);
             l[index].newtime = date1.getTime() - date2.getTime();
             if (props.loggedin) {
               if (l[index].liked.includes(props.myhandle)) {
@@ -77,9 +79,9 @@ export default function CommentsComponent(props) {
   }, [inView]);
   return (
     <>
-      <div className="my-3 mt-6 flex flex-col space-y-4">
+      <div className="flex flex-col my-3 mt-6 space-y-4">
         {!loading ? (
-          comments.map((comment) => (
+          comments.map((comment:any) => (
             <CommentComponent
               time={timeAgo.format(Date.now() - comment.newtime)}
               myhandle={props.myhandle}

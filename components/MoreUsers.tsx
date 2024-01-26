@@ -1,18 +1,20 @@
 "use client";
 
-import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
+import UserComponent from "./UserComponent";
+import { createClient } from "@/utils/supabase/client";
 import { useInView } from "react-intersection-observer";
 import { Oval } from "react-loader-spinner";
-import UserComponent from "./UserComponent";
 
-export default function MoreUsers() {
-  const [users, setUsers] = useState([]);
+export default function MoreUsers(props:any) {
+  const [users, setUsers] = useState<any>([]);
   const [myhandle, setMyHandle] = useState("");
-  const [, setUserId] = useState("");
+  const [userid, setUserId] = useState("");
   const supabase = createClient();
   const [followinglist, setFollowingList] = useState([]);
   const PAGE_COUNT = 4;
+  const [loading, setLoading] = useState(true);
+  const [comments, setComments] = useState([]);
   const [offset, setOffset] = useState(1);
   const { ref, inView } = useInView();
   const [halt, setHalt] = useState(false);
@@ -21,18 +23,15 @@ export default function MoreUsers() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (user) {
-        setUserId(user.id);
+      if(user){
+      setUserId(user.id);
       }
-      const { data } = await supabase
-        .from("user")
-        .select("*")
-        .eq("id", user?.id);
-      if (data) {
-        setMyHandle(data[0]["handle"]);
-        setFollowingList(data[0]["following"]);
-      }
+      const { data, error } = await supabase.from("user").select("*").eq("id", user?.id);
+      if(data){
+      setMyHandle(data[0]["handle"]);
+      setFollowingList(data[0]["following"]);
     }
+  }
     set();
   }, []);
 
@@ -40,25 +39,18 @@ export default function MoreUsers() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    const { data, error } = await supabase
-      .from("user")
-      .select("*")
-      .range(from, to)
-      .not("id", "in", `(${user?.id})`);
+    const { data, error } = await supabase.from("user").select("*").range(from, to).not("id", "in", `(${user?.id})`);
     if (error) {
       console.log(error);
     } else {
       if (data && data.length > 0) {
         console.log(data);
-        const ds = data;
+        let ds = data;
         const {
           data: { user },
         } = await supabase.auth.getUser();
 
-        const { data: x } = await supabase
-          .from("user")
-          .select("*")
-          .eq("id", user?.id);
+        const { data: x, error: xe } = await supabase.from("user").select("*").eq("id", user?.id);
 
         for await (const [index, post] of ds.entries()) {
           if (x && x[0]["following"].includes(post.handle)) {
@@ -88,8 +80,8 @@ export default function MoreUsers() {
   }, [inView]);
   return (
     <div className="w-full">
-      <div className="animate-in hiddenscroll grid grid-cols-1 content-center items-center gap-2 px-3 xl:grid-cols-2">
-        {users.map((user) => (
+      <div className="grid items-center content-center grid-cols-1 gap-2 px-3 xl:grid-cols-2 animate-in hiddenscroll">
+        {users.map((user:any) => (
           <UserComponent
             myID={myhandle}
             key={user["id"]}
@@ -106,7 +98,7 @@ export default function MoreUsers() {
           />
         ))}
       </div>
-      <div className="flex w-full flex-col content-center items-center">
+      <div className="flex flex-col items-center content-center w-full">
         <Oval
           height={80}
           width={80}
