@@ -26,9 +26,9 @@ export default async function Index() {
   const date1 = new Date();
   const isSupabaseConnected = canInitSupabaseClient();
   let empty = true;
-  let posts: any[] = [];
+  let posts: any = [];
   let loading = true;
-  let l: any[] = [];
+  let l: any = [];
   async function get() {
     const { data: user } = await supabase.auth.getUser();
     const s = user.user!.id;
@@ -81,7 +81,7 @@ export default async function Index() {
             <div className="animate-in hiddenscroll mb-20 flex flex-col gap-2">
               {!loading ? (
                 !empty ? (
-                  posts.map((post) => (
+                  posts.map((post: { id: any; cover: any; title: any; diff: number; image: any; dp: any; handle: any; name: any; excerpt: any; }) => (
                     <PostComponent
                       id={post.id}
                       cover={post.cover}
