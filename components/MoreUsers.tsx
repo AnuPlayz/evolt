@@ -89,7 +89,7 @@ export default function MoreUsers() {
   return (
     <div className="w-full">
       <div className="animate-in hiddenscroll grid grid-cols-1 content-center items-center gap-2 px-3 xl:grid-cols-2">
-        {users.map((user: any) => (
+        {users.map((user:any) => (
           <UserComponent
             myID={myhandle}
             key={user["id"]}

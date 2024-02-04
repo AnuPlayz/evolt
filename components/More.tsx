@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { Oval } from "react-loader-spinner";
 import PostComponent from "./PostComponent";
-export default function More(props: any) {
+export default function More(props:any) {
   const supabase = createClient();
   const [offset, setOffset] = useState(1);
   const { ref, inView } = useInView();
@@ -42,7 +42,7 @@ export default function More(props: any) {
               ds[index].diff = date1.getTime() - date2.getTime();
             }
           }
-          setPosts((prev: any) => [...prev, ...ds]);
+          setPosts((prev:any) => [...prev, ...ds]);
           if (ds.length < PAGE_COUNT) {
             setHalt(true);
           }
@@ -97,7 +97,7 @@ export default function More(props: any) {
   return (
     <>
       <div className="flex flex-col content-center items-center gap-2">
-        {posts.map((post: any) => (
+        {posts.map((post:any) => (
           <PostComponent
             id={post.id}
             type="profile"

@@ -4,7 +4,7 @@ import "@mdxeditor/editor/style.css";
 import MDEditor from "@uiw/react-md-editor";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { useRef, useState } from "react";
+import { MouseEvent, useRef, useState } from "react";
 import rehypeSanitize from "rehype-sanitize";
 
 export default function Create() {
@@ -25,10 +25,10 @@ export default function Create() {
       return "https://xiexuntwvmedvyxokvvf.supabase.co/storage/v1/object/public/posts/covers/" + id + ".jpg";
     }
   }
-  const hiddenFileInput = useRef<HTMLInputElement | any>(null);
-  const handleClick = (event: any) => {
+  const hiddenFileInput = useRef<HTMLInputElement | null>(null);
+  const handleClick = (event: MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
-    hiddenFileInput.current.click();
+    hiddenFileInput!.current!.click();
   };
   const supabase = createClient();
   const [content, setContent] = useState("");
@@ -93,31 +93,31 @@ export default function Create() {
   }
   return (
     <div className={`h-screen flex-1 gap-2 overflow-hidden px-8`}>
-      <div className="hiddenscroll h-full overflow-y-scroll">
+      <div className="h-full overflow-y-scroll hiddenscroll">
         <form
-          className="animate-in my-auto flex w-full flex-col justify-center gap-2 overflow-x-hidden py-10 pr-5 text-foreground"
+          className="flex flex-col justify-center w-full gap-2 py-10 pr-5 my-auto overflow-x-hidden animate-in text-foreground"
           action={create}
         >
           <h1 className="mb-6 text-2xl font-bold text-black md:text-3xl">Publish New Post</h1>
 
-          <label className="mb-1 text-lg" htmlFor="content">
+          <label className="mb-1 text-base" htmlFor="content">
             Title
           </label>
           <input
-            onChange={(e: any) => setTitle(e.target.value)}
-            className="mb-6 mr-4 w-full border bg-white px-4 py-2 text-sm "
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full px-4 py-2 mb-6 mr-4 text-sm bg-white border "
             name="content"
             placeholder="Please Type Out Your Title"
             required
             maxLength={60}
             minLength={15}
           />
-          <label className="mb-1 text-lg" htmlFor="content">
+          <label className="mb-1 text-base" htmlFor="content">
             Excerpt
           </label>
           <textarea
-            onChange={(e: any) => setExcerpt(e.target.value)}
-            className="mb-6 mr-4 w-full border bg-white px-4 py-2 text-sm "
+            onChange={(e) => setExcerpt(e.target.value)}
+            className="w-full px-4 py-2 mb-6 mr-4 text-sm bg-white border "
             name="content"
             placeholder="Please Type Out Your Excerpt"
             required
@@ -125,30 +125,29 @@ export default function Create() {
             minLength={90}
           />
           <input
-            onChange={(e: any) => (setCover(URL.createObjectURL(e.target.files[0])), setFile(e.target.files[0]))}
-            className="inset-x-0 bottom-0 mx-auto hidden"
+            onChange={(e:any) => (setCover(URL.createObjectURL(e.target.files[0])), setFile(e.target.files[0]))}
+            className="inset-x-0 bottom-0 hidden mx-auto"
             type="file"
             ref={hiddenFileInput}
           />
-          <label className="mb-1 text-lg" htmlFor="content">
+          <label className="mb-1 text-base" htmlFor="content">
             Cover Image
           </label>
-          <div className="relative mb-6 mr-4 h-40 w-full shrink-0 border px-4 py-2">
-            <Image
+          <div className="relative px-4 py-2 mb-6 mr-4 border aspect-video shrink-0">
+            <img
               src={cover}
-              width={160}
-              height={160}
-              className="absolute inset-0 h-40 w-full shrink-0 object-cover"
+              
+              className="absolute inset-0 object-cover aspect-video shrink-0"
               alt="cover"
             />
             <button
-              onClick={(e: any) => (setChanged(true), handleClick(e))}
-              className="absolute inset-0 m-auto h-max w-max bg-black/60 px-6 py-3 text-xs text-white backdrop-blur-sm"
+              onClick={(e:any) => (setChanged(true), handleClick(e))}
+              className="absolute inset-0 px-6 py-3 m-auto text-xs text-white h-max w-max bg-black/60 backdrop-blur-sm"
             >
               Change Cover
             </button>
           </div>
-          <label className="mb-1 text-lg" htmlFor="content">
+          <label className="mb-1 text-base" htmlFor="content">
             Content
           </label>
           <div data-color-mode="light">
@@ -163,7 +162,7 @@ export default function Create() {
             />
           </div>
 
-          <button className="mb-2 w-max bg-black px-8 py-4 text-sm text-white">Publish This Post</button>
+          <button className="px-8 py-4 mb-2 text-xs text-white bg-black w-max">Publish This Post</button>
         </form>
       </div>
     </div>

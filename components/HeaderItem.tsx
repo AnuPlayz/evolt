@@ -1,13 +1,8 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-interface pros {
-  url?: any;
-  name: string;
-  link?: any;
-}
 
-export default function App(props: pros) {
+export default function App(props:any) {
   const loc = usePathname();
   const a = { opened: false };
 
@@ -25,7 +20,7 @@ export default function App(props: pros) {
   return (
     <Link
       href={props.link}
-      className={`mx-2 flex w-max cursor-pointer flex-row content-center items-center rounded-lg px-3 py-[10px] transition-all duration-100 ease-linear md:mx-0 md:w-full md:space-x-[8px] md:px-[6px] md:py-[8px] md:pr-8  ${
+      className={`mx-2 flex w-max cursor-pointer flex-row content-center items-center  px-3 py-[10px] transition-all bg-gray-50 md:bg-transparent border border-gray-200 h-[calc(13*4px)] md:h-max md:border-none md:rounded-none  duration-100 ease-linear md:mx-0 md:w-full md:space-x-[10px] md:px-[6px] md:py-[8px] md:pr-8  ${
         a.opened ? "" : ""
       }`}
     >
@@ -39,7 +34,7 @@ export default function App(props: pros) {
         {props.url}
       </svg>
       <span
-        className={`font-pops hidden text-xs text-black md:inline-block ${
+        className={`font-pops hidden text-sm text-black md:inline-block ${
           a.opened ? "font-medium text-black" : "font-normal text-gray-600"
         } pt-[0px]`}
       >

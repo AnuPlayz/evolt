@@ -74,7 +74,7 @@ export default function MoreBookMarks(props: { slug: string }) {
   return (
     <>
       <div className="flex flex-col content-center items-center gap-2">
-        {posts.map((post: any) => (
+        {posts.map((post:any) => (
           <PostComponent
             id={post.id}
             type="profile"

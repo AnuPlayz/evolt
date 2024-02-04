@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { Oval } from "react-loader-spinner";
 import CommentComponent from "./CommentComponent";
-export default function CommentsComponent(props: any) {
+export default function CommentsComponent(props:any) {
   const supabase = createClient();
   TimeAgo.locale(en);
   const timeAgo = new TimeAgo("en-US");
@@ -79,7 +79,7 @@ export default function CommentsComponent(props: any) {
     <>
       <div className="my-3 mt-6 flex flex-col space-y-4">
         {!loading ? (
-          comments.map((comment: any) => (
+          comments.map((comment:any) => (
             <CommentComponent
               time={timeAgo.format(Date.now() - comment.newtime)}
               myhandle={props.myhandle}
